@@ -20,6 +20,12 @@
     </div>
     <div class="row">
       <div class="col s12">
+        <input v-model="darkMode" type="checkbox" class="filled-in" id="form_sort_by">
+        <label for="form_sort_by">Enable dark mode</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
         <input v-model="notifications" type="checkbox" class="filled-in" id="form_notifications" :checked="settings.notifications == 'granted'">
         <label for="form_notifications">Enable notifications</label>
       </div>
@@ -50,7 +56,8 @@ module.exports = {
       password: "",
       passwordAgain: "",
       notifications: Notification.permission,
-      sortDialogsByRead: false
+      sortDialogsByRead: false,
+      darkMode: false
     };
   },
   watch: {
@@ -78,6 +85,7 @@ module.exports = {
   },
   ready: function() {
     this.sortDialogsByRead = this.settings.sortDialogsBy == "lastRead";
+    this.darkMode = this.settings.darkMode;
     this.highlightKeywords = this.user.highlightKeywords.join(", ");
   }
 };

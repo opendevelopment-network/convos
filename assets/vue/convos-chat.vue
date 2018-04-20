@@ -3,7 +3,7 @@
     <header>
       <a href="#main-menu" @click.prevent="toggleMainMenu" class="toggle-main-menu" :class="settings.mainMenuVisible ? 'active' : ''"><i class="material-icons">dehaze</i></a>
       <div class="input-field">
-        <input v-model="searchQuery" @keydown.enter="search" id="goto_anything" type="search" autocomplete="off" placeholder="Search...">
+        <input tabindex="-1" v-model="searchQuery" @keydown.enter="search" id="goto_anything" type="search" autocomplete="off" placeholder="Search...">
         <label for="goto_anything"><i class="material-icons">search</i></label>
       </div>
       <h2>{{header()}}</h2>

@@ -1,6 +1,6 @@
 <template>
   <div class="input-field col" :class="cols">
-    <input v-model="value" v-el:input class="validate"
+    <input v-model="value" v-el:input class="validate" tabindex="-1"
       :autocomplete="autocomplete" :disabled="disabled"
       :id="id" :name="name" :placeholder="placeholder"
       :readonly="readonly" :required="required" :type="type"

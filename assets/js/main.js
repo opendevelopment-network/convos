@@ -63,6 +63,10 @@
           if (DEBUG.watch && v != o) console.log("[loc:sortDialogsBy] " + (o || "<unset>") + " => " + (v || "<unset>"));
           localStorage.setItem("sortDialogsBy", v);
         },
+        "settings.darkMode": function(v, o) {
+          if (DEBUG.watch && v != o) console.log("[loc:darkMode] " + (o || "<unset>") + " => " + (v || "<unset>"));
+          localStorage.setItem("darkMode", v);
+        },
         "settings.sidebar": function(v, o) {
           if (DEBUG.watch && v != o) console.log("[loc:sidebar] " + (o || "<unset>") + " => " + (v || "<unset>"));
           localStorage.setItem("sidebar", v);

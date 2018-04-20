@@ -6,6 +6,7 @@
   Convos.settings.mainMenuVisible = false;
   Convos.settings.notifications = localStorage.getItem("notifications") || Notification.permission;
   Convos.settings.sortDialogsBy = localStorage.getItem("sortDialogsBy") || "lastRead";
+  Convos.settings.darkMode = localStorage.getItem("darkMode") || false;
 
   var hideParam = location.href.match(/hide=(.+)/) || ["", ""];
   hideParam[1].split(",").forEach(function(id) { Convos.settings.hide[id] = true; });
