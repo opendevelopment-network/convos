@@ -657,8 +657,8 @@ sub _event_rpl_welcome {
   my ($self, $msg) = @_;
   my ($write, @commands);
 
-  push @commands, map { $_->is_private ? "/ison $_->{name}" : $_ } @{$self->dialogs};
   push @commands, grep {/\S/} @{$self->on_connect_commands};
+  push @commands, map { $_->is_private ? "/ison $_->{name}" : $_ } @{$self->dialogs};
 
   $self->_notice($msg->{params}[1]);    # Welcome to the debian Internet Relay Chat Network superman
   $self->{myinfo}{nick} = $msg->{params}[0];
