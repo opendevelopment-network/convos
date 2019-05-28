@@ -1,5 +1,5 @@
 <script>
-import {dialogs} from '../store/user';
+import {getContext} from 'svelte';
 import {l} from '../js/i18n';
 import {pathParts} from '../store/router';
 import DialogSubject from '../components/DialogSubject.svelte';
@@ -9,11 +9,13 @@ import StateIcon from '../components/StateIcon.svelte';
 export let connectionId;
 export let dialogId;
 
+const user = getContext('user');
+
 function partDialog(e) {
   alert('TODO');
 }
 
-$: dialog = $dialogs.filter(d => d.connection_id == connectionId && d.dialog_id == dialogId)[0] || {};
+$: dialog = $user.dialogs.filter(d => d.connection_id == connectionId && d.dialog_id == dialogId)[0] || {};
 </script>
 
 <div class="settings-pane">

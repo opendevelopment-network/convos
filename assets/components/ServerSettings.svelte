@@ -1,43 +1,41 @@
 <script>
-import {connections, ensureConnection} from '../store/user';
 import {getContext, tick} from 'svelte';
 import {l} from '../js/i18n';
 import Checkbox from '../components/form/Checkbox.svelte';
 import ConnURL from '../js/ConnURL';
 import FormActions from '../components/form/FormActions.svelte';
+import OperationStatus from '../components/OperationStatus.svelte';
 import PasswordField from '../components/form/PasswordField.svelte';
-import PromiseStatus from '../components/PromiseStatus.svelte';
 import StateIcon from '../components/StateIcon.svelte';
 import TextField from '../components/form/TextField.svelte';
 
 export let connectionId;
 
-const api = getContext('api');
+const user = getContext('user');
+const updateConnection = user.api.operation('updateConnection');
+
 let formEl;
-let promise = false;
 let showAdvancedSettings = false;
 let url = '';
 
-function changeConnectionState(e) {
+async function changeConnectionState(e) {
   const clone = {...connection, wanted_state: isDisconnected ? 'connected' : 'disconnected'};
-  promise = api.execute('updateConnection', clone).then(ensureConnection);
+  await updateConnection.execute(clone);
+  user.ensureConnection(updateConnection.res.body);
 }
 
 function deleteConnection(e) {
   alert('TODO');
 }
 
-function onChange(e) {
-  promise = false;
-}
-
 async function onSubmit(e) {
   url = new ConnURL('irc://localhost:6667').fromForm(e.target).toString();
   await tick(); // Wait for url to update in form
-  promise = api.execute('updateConnection', e.target).then(ensureConnection);
+  await updateConnection.execute(e.target);
+  user.ensureConnection(updateConnection.res.body);
 }
 
-$: connection = $connections.filter(c => c.connection_id == connectionId)[0] || {};
+$: connection = $user.connections.filter(c => c.connection_id == connectionId)[0] || {};
 $: isDisconnected = connection.state == 'disconnected';
 
 $: if (connection.url && formEl) {
@@ -51,7 +49,7 @@ $: if (connection.url && formEl) {
 
 <div class="settings-pane">
   <h2>{l('Connection settings')}</h2>
-  <form method="post" bind:this="{formEl}" on:change={onChange} on:submit|preventDefault="{onSubmit}">
+  <form method="post" bind:this="{formEl}" on:submit|preventDefault="{onSubmit}">
     <input type="hidden" name="connection_id" value="{connectionId}">
     <input type="hidden" name="url" value="{url}">
     <TextField name="server" placeholder="{l('Ex: chat.freenode.net:6697')}">
@@ -75,6 +73,6 @@ $: if (connection.url && formEl) {
       <a href="#delete" class="btn" on:click|preventDefault="{deleteConnection}">{l('Delete')}</a>
       <StateIcon obj="{connection}"/>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <OperationStatus op={updateConnection}/>
   </form>
 </div>
