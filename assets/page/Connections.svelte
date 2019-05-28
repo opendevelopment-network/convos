@@ -5,17 +5,17 @@ import {l} from '../js/i18n';
 import Checkbox from '../components/form/Checkbox.svelte';
 import FormActions from '../components/form/FormActions.svelte';
 import PasswordField from '../components/form/PasswordField.svelte';
-import PromiseStatus from '../components/PromiseStatus.svelte';
+import FormStatus from '../components/FormStatus.svelte';
 import SidebarChat from '../components/SidebarChat.svelte';
 import TextField from '../components/form/TextField.svelte';
 
 const api = getContext('api');
-let promise = false;
+let res = false, err = false, loading=false;
 let showAdvancedSettings = false;
 let url = '';
 
 function onChange(e) {
-  promise = false;
+  res = false;
 }
 
 async function onSubmit(e) {
@@ -28,10 +28,13 @@ async function onSubmit(e) {
   url = connectionUrl.href;
   await tick(); // Wait for url to update in form
 
-  promise = api.execute('createConnection', form).then(res => {
+  try {
+   loading=true;
+    res = await api.execute('createConnection', form);
     gotoUrl('/chat/' + res.connection_id);
-  });
+  } catch (e) { err = e }
 }
+loading =false;
 </script>
 
 <SidebarChat/>
@@ -58,6 +61,6 @@ async function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Add connection')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <FormStatus res={res} err={err} loading={loading}/>
   </form>
 </main>

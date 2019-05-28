@@ -6,16 +6,16 @@ import {l} from '../js/i18n';
 import Checkbox from '../components/form/Checkbox.svelte';
 import FormActions from '../components/form/FormActions.svelte';
 import PasswordField from '../components/form/PasswordField.svelte';
-import PromiseStatus from '../components/PromiseStatus.svelte';
+import FormStatus from '../components/FormStatus.svelte';
 import SidebarChat from '../components/SidebarChat.svelte';
 import TextField from '../components/form/TextField.svelte';
 
 const api = getContext('api');
 let formEl;
-let promise = false;
+let res= false, err = false;
 
 function onChange(e) {
-  promise = false;
+  res = false; err=false;
 }
 
 async function onSubmit(e) {
@@ -33,11 +33,13 @@ async function onSubmit(e) {
   }
 
   if (passwords.join('').length && passwords[0] != passwords[1]) {
-    return (promise = Promise.reject({errors: [{message: l('Passwords does not match.')}]}));
+    return err={errors: [{message: l('Passwords does not match.')}]};
   }
 
   $expandUrlToMedia = form.expand_url.checked;
-  promise = api.execute('updateUser', form);
+  try {
+    res = await api.execute('updateUser', form);
+  } catch (e) { err = e }
 }
 
 // TODO: Figure out a better way to uncheck
@@ -77,6 +79,6 @@ $: if (formEl && $highlightKeywords) formEl.highlight_keywords.value = $highligh
     <FormActions>
       <button class="btn">{l('Save settings')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <FormStatus res={res} err={err}/>
   </form>
 </main>

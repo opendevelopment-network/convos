@@ -4,19 +4,20 @@ import {getContext} from 'svelte';
 import {gotoUrl} from '../store/router';
 import FormActions from '../components/form/FormActions.svelte';
 import Link from '../components/Link.svelte';
-import PromiseStatus from '../components/PromiseStatus.svelte';
+import FormStatus from '../components/FormStatus.svelte';
 import PasswordField from '../components/form/PasswordField.svelte';
 import SidebarLoggedout from '../components/SidebarLoggedout.svelte';
 import TextField from '../components/form/TextField.svelte';
 
 const api = getContext('api');
 
-let promise = false;
-function onSubmit(e) {
-  promise = api.execute('loginUser', e.target).then((res) => {
+let err = false, res = false, loading = false;
+async function onSubmit(e) {
+  try {
+    let res = await api.execute('loginUser', e.target);
     document.cookie = res.headers['Set-Cookie'];
     gotoUrl('/chat');
-  });
+  } catch (e) { err = e; }
 }
 </script>
 
@@ -34,6 +35,7 @@ function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Log in')}</button>
     </FormActions>
+    <FormStatus err={err} res={res} loading={loading} />
   </form>
   <article>
     <p>{l('Welcome message. Vivamus congue mauris eu aliquet pharetra. Nulla sit amet dictum.')}</p>

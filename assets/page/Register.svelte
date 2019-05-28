@@ -5,23 +5,27 @@ import {l} from '../js/i18n';
 import FormActions from '../components/form/FormActions.svelte';
 import Link from '../components/Link.svelte';
 import PasswordField from '../components/form/PasswordField.svelte';
-import PromiseStatus from '../components/PromiseStatus.svelte';
+import FormStatus from '../components/FormStatus.svelte';
 import SidebarLoggedout from '../components/SidebarLoggedout.svelte';
 import TextField from '../components/form/TextField.svelte';
 
 const inviteCodeRequired = true;
 const api = getContext('api');
 
-let promise = false;
+let res = false, err = false, loading = false;
 function onChange(e) {
-  promise = false;
+  res = false, err = false;
 }
 
 async function onSubmit(e) {
-  promise = api.execute('registerUser', e.target).then((res) => {
-    document.cookie = res.headers['Set-Cookie'];
-    gotoUrl('/chat');
-  });
+  loading=true
+  try {
+    res = await api.execute('registerUser', e.target);
+  document.cookie = res.headers['Set-Cookie'];
+  gotoUrl('/chat');
+  } catch (e) { err=e }
+  loading=false;
+  console.log(err);
 }
 </script>
 
@@ -44,7 +48,7 @@ async function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Register')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <FormStatus res={res} error={err} loading={loading}/>
   </form>
   <article>
     <p>{l('By creating an account, you agree to the use of cookies.')}</p>
