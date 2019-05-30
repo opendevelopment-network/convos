@@ -22,20 +22,15 @@ async function createConnection(form) {
   gotoUrl('/chat/' + res.connection_id);
 }
 
-function onChange(e) {
-  promise = false;
-}
-
-function onSubmit(e) {
-  let promise = createConnection(e.target);
-}
 </script>
 
 <SidebarChat/>
 
 <main class="main-app-pane align-content-middle">
   <h1>{l('Add connection')}</h1>
-  <form method="post" on:change={onChange} on:submit|preventDefault="{onSubmit}">
+  <form method="post" 
+    on:change="{e => promise = false}"
+    on:submit|preventDefault="{e => promise = createConnection(e.target)}">
     <input type="hidden" name="url" value="{url}">
     <TextField name="server" placeholder="{l('Ex: chat.freenode.net:6697')}">
       <span slot="label">{l('Server and port')}</span>
@@ -55,6 +50,6 @@ function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Add connection')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <PromiseStatus {promise}/>
   </form>
 </main>

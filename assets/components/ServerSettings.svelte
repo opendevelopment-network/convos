@@ -27,14 +27,6 @@ function deleteConnection(e) {
   alert('TODO');
 }
 
-function onChange(e) {
-  promise = false;
-}
-
-function onSubmit(e) {
-  promise = updateConnection(e.target)
-}
-
 $: connection = $connections.filter(c => c.connection_id == connectionId)[0] || {};
 $: isDisconnected = connection.state == 'disconnected';
 
@@ -57,7 +49,9 @@ async function updateConnection(e) {
 
 <div class="settings-pane">
   <h2>{l('Connection settings')}</h2>
-  <form method="post" bind:this="{formEl}" on:change={onChange} on:submit|preventDefault="{onSubmit}">
+  <form method="post" bind:this="{formEl}" 
+    on:change="{e => promise = false}"
+    on:submit|preventDefault="{e => promise = updateConnection(e.target}">
     <input type="hidden" name="connection_id" value="{connectionId}">
     <input type="hidden" name="url" value="{url}">
     <TextField name="server" placeholder="{l('Ex: chat.freenode.net:6697')}">
@@ -81,6 +75,6 @@ async function updateConnection(e) {
       <a href="#delete" class="btn" on:click|preventDefault="{deleteConnection}">{l('Delete')}</a>
       <StateIcon obj="{connection}"/>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <PromiseStatus {promise}/>
   </form>
 </div>

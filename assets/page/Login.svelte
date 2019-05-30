@@ -22,16 +22,13 @@ async function login(target) {
   return res;
 }
 
-function onSubmit(e) {
-  promise = login(e.target);
-}
 </script>
 
 <SidebarLoggedout/>
 
 <main class="main-app-pane align-content-middle">
   <h1>{l('Log in')}</h1>
-  <form method="post" on:submit|preventDefault="{onSubmit}">
+  <form method="post" on:submit|preventDefault="{e => promise = login(e.target)}">
     <TextField name="email" placeholder="{l('Ex: john@doe.com')}">
       <span slot="label">{l('E-mail')}</span>
     </TextField>
@@ -41,7 +38,7 @@ function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Log in')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <PromiseStatus {promise}/>
   </form>
   <article>
     <p>{l('Welcome message. Vivamus congue mauris eu aliquet pharetra. Nulla sit amet dictum.')}</p>

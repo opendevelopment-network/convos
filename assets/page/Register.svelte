@@ -14,9 +14,6 @@ const inviteCodeRequired = true;
 const api = getContext('api');
 
 let promise = false;
-function onChange(e) {
-  promise = false;
-}
 
 async function register(target) {
   const res = await api.execute('registerUser', target)
@@ -24,16 +21,13 @@ async function register(target) {
   getUser(api);
   gotoUrl('/chat');
 }
-function onSubmit(e) {
-  promise = register(e.target)
-}
 </script>
 
 <SidebarLoggedout/>
 
 <main class="main-app-pane align-content-middle">
   <h1>{l('Create account')}</h1>
-  <form method="post" on:change={onChange} on:submit|preventDefault="{onSubmit}">
+  <form method="post" on:change="{e => promise = false }" on:submit|preventDefault="{e => promise = register(e.target)}">
     <TextField name="email" placeholder="{l('Ex: john@doe.com')}">
       <span slot="label">{l('E-mail')}</span>
     </TextField>
@@ -48,7 +42,7 @@ function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Register')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <PromiseStatus {promise}/>
   </form>
   <article>
     <p>{l('By creating an account, you agree to the use of cookies.')}</p>

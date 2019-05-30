@@ -17,7 +17,7 @@ function extractError(err) {
 {#await promise}
 <div class="loading"><slot name="loading">{l('Loading...')}</slot></div>
 {:then res}
-<div class="ok">{l('Operation Completed')}</div>
+<div class="ok">{#if res.message} {l(res.message)}{/if}</div>
 
 {:catch err}
 <div class="error"><slot name="error">{l(extractError(err))}</slot></div>

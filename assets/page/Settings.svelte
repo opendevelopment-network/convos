@@ -14,11 +14,8 @@ const api = getContext('api');
 let formEl;
 let promise = false;
 
-function onChange(e) {
-  promise = false;
-}
 
-async function onSubmit(e) {
+async function updateSettings(e) {
   const form = e.target;
   const passwords = [form.password.value, form.password_again.value];
 
@@ -33,11 +30,11 @@ async function onSubmit(e) {
   }
 
   if (passwords.join('').length && passwords[0] != passwords[1]) {
-    return (promise = Promise.reject({errors: [{message: l('Passwords does not match.')}]}));
+    throw ({errors: [{message: l('Passwords does not match.')}]});
   }
 
   $expandUrlToMedia = form.expand_url.checked;
-  promise = api.execute('updateUser', form);
+  return await api.execute('updateUser', form);
 }
 
 // TODO: Figure out a better way to uncheck
@@ -50,7 +47,9 @@ $: if (formEl && $highlightKeywords) formEl.highlight_keywords.value = $highligh
 
 <main class="main-app-pane align-content-middle">
   <h1>{l('Settings')}</h1>
-  <form method="post" on:change={onChange} on:submit|preventDefault="{onSubmit}" bind:this="{formEl}">
+  <form method="post" 
+    on:change="{e => promise = false}" 
+    on:submit|preventDefault="{e => promise = updateSettings(e)}" bind:this="{formEl}">
     <TextField name="email" value="{$email}" readonly>
       <span slot="label">{l('Email')}</span>
     </TextField>
@@ -77,6 +76,6 @@ $: if (formEl && $highlightKeywords) formEl.highlight_keywords.value = $highligh
     <FormActions>
       <button class="btn">{l('Save settings')}</button>
     </FormActions>
-    <PromiseStatus promise={promise}/>
+    <PromiseStatus {promise}/>
   </form>
 </main>
