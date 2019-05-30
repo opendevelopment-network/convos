@@ -15,15 +15,19 @@ let promise = false;
 let showAdvancedSettings = false;
 let url = '';
 
+async function createConnection(form) {
+  url = new ConnURL('irc://localhost:6667').fromForm(form).toString();
+  await tick(); // Wait for url to update in form
+  let res = await api.execute('createConnection', form);
+  gotoUrl('/chat/' + res.connection_id);
+}
+
 function onChange(e) {
   promise = false;
 }
 
-async function onSubmit(e) {
-  const form = e.target;
-  url = new ConnURL('irc://localhost:6667').fromForm(form).toString();
-  await tick(); // Wait for url to update in form
-  promise = api.execute('createConnection', form).then(res => { gotoUrl('/chat/' + res.connection_id) });
+function onSubmit(e) {
+  let promise = createConnection(e.target);
 }
 </script>
 

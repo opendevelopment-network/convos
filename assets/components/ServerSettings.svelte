@@ -20,7 +20,7 @@ let url = '';
 
 function changeConnectionState(e) {
   const clone = {...connection, wanted_state: isDisconnected ? 'connected' : 'disconnected'};
-  promise = api.execute('updateConnection', clone).then(ensureConnection);
+  promise = updateConnection(clone);
 }
 
 function deleteConnection(e) {
@@ -31,10 +31,8 @@ function onChange(e) {
   promise = false;
 }
 
-async function onSubmit(e) {
-  url = new ConnURL('irc://localhost:6667').fromForm(e.target).toString();
-  await tick(); // Wait for url to update in form
-  promise = api.execute('updateConnection', e.target).then(ensureConnection);
+function onSubmit(e) {
+  promise = updateConnection(e.target)
 }
 
 $: connection = $connections.filter(c => c.connection_id == connectionId)[0] || {};
@@ -46,6 +44,14 @@ $: if (connection.url && formEl) {
   formEl.password.value = connection.url.password;
   formEl.username.value = connection.url.username;
   formEl.url.value = connection.url.toString();
+}
+
+async function updateConnection(e) { 
+  url = new ConnURL('irc://localhost:6667').fromForm(e.target).toString();
+  await tick(); // Wait for url to update in form
+  let res = await api.execute('updateConnection', e);
+  ensureConnection();
+  return res;
 }
 </script>
 

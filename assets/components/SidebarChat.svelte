@@ -60,8 +60,9 @@ function filterNav(filter) {
   });
 }
 
-function logout(e) {
-  api.execute('logoutUser').then(() => gotoUrl('/'));
+async function logout(e) {
+  const res = await api.execute('logoutUser');
+  gotoUrl('/');
 }
 
 function onGlobalKeydown(e) {

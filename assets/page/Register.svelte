@@ -18,12 +18,14 @@ function onChange(e) {
   promise = false;
 }
 
-async function onSubmit(e) {
-  promise = api.execute('registerUser', e.target).then((res) => {
-    document.cookie = res.headers['Set-Cookie'];
-    getUser(api);
-    gotoUrl('/chat');
-  });
+async function register(target) {
+  const res = await api.execute('registerUser', target)
+  document.cookie = res.headers['Set-Cookie'];
+  getUser(api);
+  gotoUrl('/chat');
+}
+function onSubmit(e) {
+  promise = register(e.target)
 }
 </script>
 

@@ -13,12 +13,17 @@ import TextField from '../components/form/TextField.svelte';
 const api = getContext('api');
 
 let promise = false;
+
+async function login(target) {
+  const res = await api.execute('loginUser', target);
+  document.cookie = res.headers['Set-Cookie'];
+  getUser(api);
+  gotoUrl('/chat');
+  return res;
+}
+
 function onSubmit(e) {
-  promise = api.execute('loginUser', e.target).then((res) => {
-    document.cookie = res.headers['Set-Cookie'];
-    getUser(api);
-    gotoUrl('/chat');
-  });
+  promise = login(e.target);
 }
 </script>
 
@@ -36,6 +41,7 @@ function onSubmit(e) {
     <FormActions>
       <button class="btn">{l('Log in')}</button>
     </FormActions>
+    <PromiseStatus promise={promise}/>
   </form>
   <article>
     <p>{l('Welcome message. Vivamus congue mauris eu aliquet pharetra. Nulla sit amet dictum.')}</p>
