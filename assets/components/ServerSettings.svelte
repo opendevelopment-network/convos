@@ -18,9 +18,9 @@ let promise = false;
 let showAdvancedSettings = false;
 let url = '';
 
-function changeConnectionState(e) {
+async function changeConnectionState(e) {
   const clone = {...connection, wanted_state: isDisconnected ? 'connected' : 'disconnected'};
-  promise = updateConnection(clone);
+  return await updateConnection(clone);
 }
 
 function deleteConnection(e) {
@@ -71,7 +71,7 @@ async function updateConnection(e) {
     </PasswordField>
     <FormActions>
       <button class="btn">{l('Update connection')}</button>
-      <a href="#{isDisconnected ? 'connect' : 'disconnect'}" class="btn" on:click|preventDefault="{changeConnectionState}">{l(isDisconnected ? 'Connect' : 'Disconnect')}</a>
+      <a href="#{isDisconnected ? 'connect' : 'disconnect'}" class="btn" on:click|preventDefault="{e => promise = changeConnectionState(e) }">{l(isDisconnected ? 'Connect' : 'Disconnect')}</a>
       <a href="#delete" class="btn" on:click|preventDefault="{deleteConnection}">{l('Delete')}</a>
       <StateIcon obj="{connection}"/>
     </FormActions>
