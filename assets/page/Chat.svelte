@@ -14,6 +14,7 @@ import StateIcon from '../components/StateIcon.svelte';
 import Ts from '../components/Ts.svelte';
 
 const user = getContext('user');
+const ws = user.ws;
 const connectionMessagesOp = user.api.operation('connectionMessages');
 const dialogMessagesOp = user.api.operation('dialogMessages');
 
@@ -40,6 +41,19 @@ function isSameMessage(i) {
   return i == 0 ? false : messages[i].from == messages[i - 1].from;
 }
 
+function pushMessage(msg) {
+  console.log('A', msg);
+  if (!msg) return;
+  console.log('B', msg);
+  if ((msg.dialog_id || dialog.id) && msg.dialog_id != dialog.id) return;
+  console.log('C', msg);
+  if (msg.connection_id != connection.id) return;
+  console.log('D', msg);
+  if (msg.expired && msg.message) msg.message = 'Expired: ' + msg.message;
+  console.log('E', msg);
+  if (msg.hasOwnProperty('message') && msg.message.length) messages = [...messages, msg];
+}
+
 function toggleSettings(e) {
   settingsIsVisible = !settingsIsVisible;
 }
@@ -51,6 +65,7 @@ $: fallbackSubject = dialog.frozen || (isDisconnected ? l('Disconnected.') : $pa
 $: isDisconnected = connection.state == 'disconnected';
 $: settingComponent = $pathParts[2] ? DialogSettings : ServerSettings;
 $: getMessages($pathParts);
+$: pushMessage($ws);
 </script>
 
 <SidebarChat/>
@@ -73,7 +88,9 @@ $: getMessages($pathParts);
 
   {#each messages as message, i}
     <div class="message" class:is-same="{isSameMessage(i)}" class:is-hightlight="{message.highlight}">
-      <Ts val="{message.ts}"/>
+      {#if message.ts}
+        <Ts val="{message.ts}"/>
+      {/if}
       <Link className="message_from" href="/chat/{$pathParts[1]}/{message.from}">{message.from}</Link>
       <div class="message_text">{@html md(message.message)}</div>
     </div>

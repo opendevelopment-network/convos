@@ -15,6 +15,7 @@ let inputEl;
 let pos;
 
 const user = getContext('user');
+const ws = user.ws.channel('chat');
 
 // TODO: Allow user to select tone in settings
 const emojis = {};
@@ -99,7 +100,7 @@ function sendMessage() {
   const action = (msg.message.match(/^\/(\w+)\s*(\S*)/) || ['', 'message', '']).slice(1);
   console.log('TODO', action);
 
-  if (msg.message.length) user.send(msg);
+  if (msg.message.length) ws.send(msg);
   inputEl.value = '';
 }
 
